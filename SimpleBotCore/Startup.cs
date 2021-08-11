@@ -5,6 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using MongoDB.Driver;
 using SimpleBotCore.Bot;
 using SimpleBotCore.Logic;
 using SimpleBotCore.Repositories;
@@ -17,6 +18,7 @@ namespace SimpleBotCore
 {
     public class Startup
     {
+      
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -27,6 +29,47 @@ namespace SimpleBotCore
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+           
+            string banco = Configuration["BancoDefault"];
+
+
+            if (banco == "SQL")
+            {
+                string sql = Configuration["ConnectionStrings:DefaultConnection"];
+
+                if (sql != null)
+                {
+                    services.AddSingleton<IUPerguntasRepository>(new PerguntasSqlRepository(sql));
+                }
+                else
+                {
+                    services.AddSingleton<IUPerguntasRepository, PerguntasMockRepository>();
+                }
+             
+            }
+            else if (banco == "Mongo")
+            {
+                string mongoDb = Configuration["Bot:Mongo"];
+
+
+                if (mongoDb != null)
+                {
+                    MongoClient mongo = new MongoClient(mongoDb);
+
+                    services.AddSingleton<IUPerguntasRepository>(new PerguntasMongoRepository(mongo));
+                }
+                else
+                {
+                    services.AddSingleton<IUPerguntasRepository, PerguntasMockRepository>();
+                }
+            }
+            else
+            {
+                services.AddSingleton<IUPerguntasRepository, PerguntasMockRepository>();
+            }
+
+      
+
             services.AddSingleton<IUserProfileRepository>(new UserProfileMockRepository());
             services.AddSingleton<IBotDialogHub, BotDialogHub>();
             services.AddSingleton<BotDialog, SimpleBot>();

@@ -10,15 +10,18 @@ namespace SimpleBotCore.Logic
     public class SimpleBot : BotDialog
     {
         IUserProfileRepository _userProfile;
+        IUPerguntasRepository uPerguntasRepository;
 
-        public SimpleBot(IUserProfileRepository userProfile)
+        public SimpleBot(IUserProfileRepository userProfile, IUPerguntasRepository perguntas)
         {
             _userProfile = userProfile;
+            uPerguntasRepository = perguntas;
         }
 
         protected async override Task BotConversation()
         {
             SimpleUser user = _userProfile.TryLoadUser(UserId);
+  
 
             // Create a user if it is null
             if (user == null)
@@ -74,7 +77,9 @@ namespace SimpleBotCore.Logic
                     await WriteAsync("Processando...");
 
                     // FAZER: GRAVAR AS PERGUNTAS EM UM BANCO DE DADOS
-                    await Task.Delay(5000);
+
+                    uPerguntasRepository.Perguntar(user.Nome, texto);
+                 
 
                     await WriteAsync("Resposta não encontrada");
                 }
