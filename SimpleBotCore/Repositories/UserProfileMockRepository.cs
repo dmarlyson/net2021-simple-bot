@@ -30,7 +30,7 @@ namespace SimpleBotCore.Repositories
             return user;
         }
 
-        public void AtualizaNome(string userId, string name)
+        public bool AtualizaNome(string userId, string name)
         {
             if (name == null)
                 throw new ArgumentNullException(nameof(name));
@@ -42,10 +42,10 @@ namespace SimpleBotCore.Repositories
 
             user.Nome = name;
 
-            SaveUser(user);
+            return SaveUser(user);
         }
 
-        public void AtualizaIdade(string userId, int idade)
+        public bool AtualizaIdade(string userId, int idade)
         {
             if (idade <= 0)
                 throw new ArgumentOutOfRangeException(nameof(idade));
@@ -57,10 +57,10 @@ namespace SimpleBotCore.Repositories
 
             user.Idade = idade;
 
-            SaveUser(user);
+            return SaveUser(user);
         }
 
-        public void AtualizaCor(string userId, string cor)
+        public bool AtualizaCor(string userId, string cor)
         {
             if (cor == null)
                 throw new ArgumentNullException(nameof(cor));
@@ -72,7 +72,7 @@ namespace SimpleBotCore.Repositories
 
             user.Cor = cor;
 
-            SaveUser(user);
+            return SaveUser(user);
         }
 
         private bool Exists(string userId)
@@ -85,9 +85,11 @@ namespace SimpleBotCore.Repositories
             return _users[userId];
         }
 
-        private void SaveUser(SimpleUser user)
+        private bool SaveUser(SimpleUser user)
         {
             _users[user.Id] = user;
+
+            return true;
         }
     }
 }

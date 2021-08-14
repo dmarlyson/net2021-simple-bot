@@ -6,29 +6,24 @@ using System.Threading.Tasks;
 using MongoDB.Bson;
 using MongoDB.Driver;
 using System.Data.SqlClient;
+using Dapper;
 
 namespace SimpleBotCore.Repositories
 {
     public class PerguntasSqlRepository : IUPerguntasRepository
     {
-        string connection;
+        string strCon;
         public PerguntasSqlRepository(string strConnection)
         {
-            connection = strConnection;
-        }
-      
+            strCon = strConnection;
+        }      
     
         public void Perguntar(string usuario, string pergunta)
         {
-            using (var con = new SqlConnection(connection))
+            using (SqlConnection con = new SqlConnection(strCon))
             {
-                con.Open();
-
-                SqlCommand comando = new SqlCommand("insert into Pergunta (Usuario, Pergunta) values (@user, @perg)", con);
-                comando.Parameters.AddWithValue("@user", usuario);
-                comando.Parameters.AddWithValue("@perg", pergunta);
-
-                comando.ExecuteNonQuery();
+                con.Execute("insert into Pergunta (Usuario, Pergunta) values (@user, @perg)", 
+                    new { user = usuario, perg = pergunta });
             }
         }
     }

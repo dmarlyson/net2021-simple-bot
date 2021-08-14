@@ -5,6 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using MongoDB.Bson.Serialization;
 using MongoDB.Driver;
 using SimpleBotCore.Bot;
 using SimpleBotCore.Logic;
@@ -17,8 +18,7 @@ using System.Threading.Tasks;
 namespace SimpleBotCore
 {
     public class Startup
-    {
-      
+    {      
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -29,9 +29,7 @@ namespace SimpleBotCore
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-           
             string banco = Configuration["BancoDefault"];
-
 
             if (banco == "SQL")
             {
@@ -40,10 +38,12 @@ namespace SimpleBotCore
                 if (sql != null)
                 {
                     services.AddSingleton<IUPerguntasRepository>(new PerguntasSqlRepository(sql));
+                    services.AddSingleton<IUserProfileRepository>(new UserProfileSqlRepository(sql));
                 }
                 else
                 {
                     services.AddSingleton<IUPerguntasRepository, PerguntasMockRepository>();
+                    services.AddSingleton<IUserProfileRepository>(new UserProfileMockRepository());
                 }
              
             }
@@ -51,26 +51,25 @@ namespace SimpleBotCore
             {
                 string mongoDb = Configuration["Bot:Mongo"];
 
-
                 if (mongoDb != null)
                 {
                     MongoClient mongo = new MongoClient(mongoDb);
 
                     services.AddSingleton<IUPerguntasRepository>(new PerguntasMongoRepository(mongo));
+                    services.AddSingleton<IUserProfileRepository>(new UserProfileMongoRepository(mongo));
                 }
                 else
                 {
                     services.AddSingleton<IUPerguntasRepository, PerguntasMockRepository>();
+                    services.AddSingleton<IUserProfileRepository>(new UserProfileMockRepository());
                 }
             }
             else
             {
                 services.AddSingleton<IUPerguntasRepository, PerguntasMockRepository>();
-            }
+                services.AddSingleton<IUserProfileRepository>(new UserProfileMockRepository());
+            }      
 
-      
-
-            services.AddSingleton<IUserProfileRepository>(new UserProfileMockRepository());
             services.AddSingleton<IBotDialogHub, BotDialogHub>();
             services.AddSingleton<BotDialog, SimpleBot>();
 

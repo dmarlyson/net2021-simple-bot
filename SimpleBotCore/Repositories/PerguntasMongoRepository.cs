@@ -16,9 +16,9 @@ namespace SimpleBotCore.Repositories
         {
             this.client = client;
 
-            var db = this.client.GetDatabase("dbFIAP");
+            var db = this.client.GetDatabase("db_fiap");
 
-            var col01 = db.GetCollection<BsonDocument>("col01");
+            var col01 = db.GetCollection<BsonDocument>("col_pergunta");
             this._collection = col01;
         }
 
