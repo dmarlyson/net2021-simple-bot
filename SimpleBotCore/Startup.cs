@@ -12,6 +12,7 @@ using SimpleBotCore.Logic;
 using SimpleBotCore.Repositories;
 using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -33,12 +34,12 @@ namespace SimpleBotCore
 
             if (banco == "SQL")
             {
-                string sql = Configuration["ConnectionStrings:DefaultConnection"];
+                string sqlStrConnection = Configuration["ConnectionStrings:DefaultConnection"];
 
-                if (sql != null)
+                if (sqlStrConnection != null)
                 {
-                    services.AddSingleton<IUPerguntasRepository>(new PerguntasSqlRepository(sql));
-                    services.AddSingleton<IUserProfileRepository>(new UserProfileSqlRepository(sql));
+                    services.AddSingleton<IUPerguntasRepository>(new PerguntasSqlRepository(sqlStrConnection));
+                    services.AddSingleton<IUserProfileRepository>(new UserProfileSqlRepository(sqlStrConnection));
                 }
                 else
                 {
@@ -49,14 +50,14 @@ namespace SimpleBotCore
             }
             else if (banco == "Mongo")
             {
-                string mongoDb = Configuration["Bot:Mongo"];
+                string mongoStrConnection = Configuration["Bot:Mongo"];
 
-                if (mongoDb != null)
+                if (mongoStrConnection != null)
                 {
-                    MongoClient mongo = new MongoClient(mongoDb);
+                    MongoClient mongoClient = new MongoClient(mongoStrConnection);
 
-                    services.AddSingleton<IUPerguntasRepository>(new PerguntasMongoRepository(mongo));
-                    services.AddSingleton<IUserProfileRepository>(new UserProfileMongoRepository(mongo));
+                    services.AddSingleton<IUPerguntasRepository>(new PerguntasMongoRepository(mongoClient));
+                    services.AddSingleton<IUserProfileRepository>(new UserProfileMongoRepository(mongoClient));
                 }
                 else
                 {

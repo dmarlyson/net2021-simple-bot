@@ -12,18 +12,19 @@ namespace SimpleBotCore.Repositories
 {
     public class PerguntasSqlRepository : IUPerguntasRepository
     {
-        string strCon;
-        public PerguntasSqlRepository(string strConnection)
+        private string _sqlStrConnection;
+
+        public PerguntasSqlRepository(string sqlStrConnection)
         {
-            strCon = strConnection;
+            _sqlStrConnection = sqlStrConnection;
         }      
     
         public void Perguntar(string usuario, string pergunta)
         {
-            using (SqlConnection con = new SqlConnection(strCon))
+            using (SqlConnection con = new SqlConnection(_sqlStrConnection))
             {
-                con.Execute("insert into Pergunta (Usuario, Pergunta) values (@user, @perg)", 
-                    new { user = usuario, perg = pergunta });
+                con.Execute("INSERT INTO Pergunta (Usuario, Pergunta) VALUES (@user, @perg)",
+                        new { user = usuario, perg = pergunta });
             }
         }
     }

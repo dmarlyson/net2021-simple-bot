@@ -14,6 +14,6 @@ namespace SimpleBotCore.Repositories
 
         bool AtualizaNome(string userId, string name);
         bool AtualizaIdade(string userId, int idade);
-        bool AtualizaCor(string userId, string name);
+        bool AtualizaCor(string userId, string cor);
     }
 }

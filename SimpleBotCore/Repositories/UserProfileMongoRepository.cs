@@ -82,7 +82,7 @@ namespace SimpleBotCore.Repositories
 
         public SimpleUser Create(SimpleUser user)
         {
-            if (user == null)
+            if (GetUser(user.Id) != null)
                 throw new InvalidOperationException("Usuário ja existente");
 
             SaveUser(user);
